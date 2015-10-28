@@ -5,7 +5,10 @@ var favicon = require('serve-favicon');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-var session = require('express-session')
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+var url = require('url');
+var csrf = require('csurf');
 
 var dbURL = process.env.MONGOLAB_URI || "mongodb://localhost/DomoMaker";
 
@@ -15,6 +18,18 @@ var db = mongoose.connect(dbURL, function(err){
       throw err;
     }
 });
+
+var redisURL = {
+    hostname: 'localhost',
+    port: 6379
+};
+
+var redisPASS;
+
+if(process.env.REDISCLOUD_URL){
+    redisURL = url.parse(process.env.REDISCLOUD_URL);
+    redisPASS = redisURL.auth.split(":")[1];
+}
 
 var router = require('./router.js');
 var port = process.env.PORT || process.env.NODE_PORT || 3000;
@@ -27,14 +42,30 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(session({
   key:"sessionid",
+  store: new RedisStore({
+    host:redisURL.hostname,
+    port:redisURL.port,
+    pass:redisPASS
+  }),
   secret: 'Domo Arigato',
   resave: true,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie:{
+    httpOnly: true
+  }
 }));
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(favicon(__dirname + '/../client/img/favicon.png'));
+app.disable('x-powered-by');
 app.use(cookieParser());
+
+app.use(csrf());
+app.use(function(err, res, res, next){
+    if(err.code !== "EBADCSRFTOKEN") return next(err)
+
+    return;
+});
 
 router(app);
 

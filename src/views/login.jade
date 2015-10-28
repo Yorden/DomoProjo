@@ -11,10 +11,11 @@ block body
       a(href="/signup") Sign up
   section#login
     form#loginForm(class="mainForm", name="loginForm", action="/login", method="POST")
-      label(for="username") Username: 
+      label(for="username") Username:
       input#user(type="text", name="username", placeholder="username")
-      label(for="pass") Password: 
+      label(for="pass") Password:
       input#pass(type="password", name="pass", placeholder="password")
+      input(type="hidden", name="_csrf", value="#{csrfToken}")
       a#loginSubmit(class="formSubmit", href="#") Sign in
   #domoMessage
     img#speech(src="/assets/img/speech.png", alt="speech box")
