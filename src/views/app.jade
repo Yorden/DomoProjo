@@ -11,11 +11,19 @@ block body
     form#domoForm(class="domoForm", name="domoForm", action="/maker", method="POST")
       label(for="name") Name:
       input#domoName(type="text", name="name", placeholder="Domo Name")
+      label(for="happiness") Happiness:
+      input#domoHappiness(type="text", name="happiness", placeholder="Happiness of Domo")
       label(for="age") Age:
       input#domoAge(type="text", name="age", placeholder="Domo Age")
       input(type="hidden", name="_csrf", value="#{csrfToken}")
       a#makeDomoSubmit(class="makeDomoSubmit", href="#") Make Domo
+  section#clearDomos
+    form#clearForm(class="domoForm", name="clearForm", action="/clear", method="GET")
+      input(type='submit' name="submit" value="clear all domos")
+
   section#domos
+
+
     if !domos || domos.length == 0
         div.domo
           h3.emptyDomo No Domos Yet
@@ -25,6 +33,7 @@ block body
                 img(class="domoFace", src="assets/img/domoface.jpeg", alt="domo face")
                 h3.domoName Name: #{val.name}
                 h3.domoAge Age: #{val.age}
+                h3.domoHappiness Happiness: #{val.happiness}
   #domoMessage
     img#speech(src="/assets/img/speech.png", alt="speech box")
     h3

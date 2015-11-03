@@ -10,6 +10,9 @@ var router = function(app){
     app.get('/maker', mid.requiresLogin ,controllers.Domo.makerPage);
     app.post('/maker', mid.requiresLogin ,controllers.Domo.make);
     app.get('/', mid.requiresSecure, mid.requiresLogout, controllers.Account.loginPage);
+    app.post('/clear', mid.requiresLogin, controllers.Domo.clearAll);
+    app.get('/clear', mid.requiresLogin, controllers.Domo.clearAllSuccess);
+
 };
 
 module.exports = router;
